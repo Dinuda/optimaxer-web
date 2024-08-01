@@ -4,7 +4,7 @@ import { GenCMD } from './gen-cmd/GenCMD.js';
 import { NewApp } from './new-app/NewApp.js';
 import { GenCon } from './gen-con/GenCon.js';
 const program = new Command();
-const version = '0.1.0';
+const version = '1.0.7';
 program
     .name('Optimaxer CLI')
     .version(version)
@@ -31,8 +31,10 @@ program
     .command('gen-con')
     .description('Generate Contents from a given URL.')
     .requiredOption('-u <string>', 'URL')
+    .option('-rs <string>', 'Text file with Sections List to Remove (Example: ./class_list.txt)')
     .action(async (options) => {
     const genCon = new GenCon();
     await genCon.run(options);
 });
 program.parse();
+//# sourceMappingURL=index.js.map

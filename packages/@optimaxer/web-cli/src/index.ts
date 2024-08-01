@@ -4,10 +4,9 @@ import { Command } from 'commander';
 import { GenCMD } from './gen-cmd/GenCMD.js';
 import { NewApp } from './new-app/NewApp.js';
 import { GenCon } from './gen-con/GenCon.js';
-import { AbstractAction } from './AbstractAction.js';
 
 const program = new Command();
-const version:string = '0.1.0';
+const version:string = '1.0.7';
 
 
 
@@ -41,6 +40,7 @@ program
     .command('gen-con')
     .description('Generate Contents from a given URL.')
     .requiredOption('-u <string>','URL')
+    .option('-rs <string>','Text file with Sections List to Remove (Example: ./class_list.txt)')
     .action(async (options) => {
         const genCon:GenCon = new GenCon();
         await genCon.run(options);

@@ -12,6 +12,6 @@ export const packageJson = {
         "vite-plugin-static-copy": "^1.0.6"
     },
     "dependencies": {
-        "@optimaxer/web-commands": "^1.0.4"
+        "@optimaxer/web-commands": "latest"
     }
 };

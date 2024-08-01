@@ -5,14 +5,14 @@
 
 import { Document } from '../../src/types/Document';
 import { VectorDocument } from '../../src/types/VectorDocument';
-import { ClientVectorStore } from '../../src/vector-stores/ClientVectorStore';
-import { OnBrowserEmbedding } from '../../src/embeddings/OnBrowserEmbedding';
+import { ClientVectorStoreEngine } from '../../src/vector-stores/ClientVectorStoreEngine';
+import { OnBrowserEmbeddingEngine } from '../../src/embeddings/OnBrowserEmbeddingEngine';
 
 import { expect, test } from 'vitest';
 import { DetectEnv } from '../../src/utils/DetectEnv';
 
-const clientVectorStore: ClientVectorStore = new ClientVectorStore();
-const onBrowserEmbedding: OnBrowserEmbedding = new OnBrowserEmbedding('gte-small');
+const clientVectorStore: ClientVectorStoreEngine = new ClientVectorStoreEngine();
+const onBrowserEmbedding: OnBrowserEmbeddingEngine = new OnBrowserEmbeddingEngine('gte-small');
 const vectorDocuments:VectorDocument[] = [];
 
 

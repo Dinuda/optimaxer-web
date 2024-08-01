@@ -35,3 +35,14 @@ export interface JsonDocument {
 interface Metadata {
     [key: string]: Metadata | string | number | boolean | any[];
 }
+
+/**
+ * ExampleConfig Interface
+ * 
+ * This interface defines the structure of a configuration object for an example application.
+ * It includes a version number and an array of data objects.
+ */
+export interface ExampleConfig {
+    version: string;
+    data: any[];
+}

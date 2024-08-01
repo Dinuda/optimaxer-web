@@ -1,10 +1,10 @@
 export const appTs:string = `
+
 import { CommandPipeline } from '@optimaxer/web-commands';
 
 // DOM elements
 const commandInput = document.getElementById("commandInput") as HTMLInputElement;
 const submitButton = document.getElementById("submitButton") as HTMLButtonElement;
-const saveEmbeddingsButton = document.getElementById("saveEmbeddingsButton") as HTMLButtonElement;
 const loadingIndicator = document.getElementById("loadingIndicator") as HTMLDivElement;
 const urlContainer = document.getElementById("urlContainer") as HTMLDivElement;
 const urlText = document.getElementById("urlText") as HTMLDivElement;
@@ -38,8 +38,9 @@ const handleSubmit = async () => {
     setLoading(false);
 };
 
-// Event listener for the Save Embeddings button
-saveEmbeddingsButton.addEventListener("click", handleSetupPipeline);
+window.addEventListener("DOMContentLoaded", async () => {
+    await handleSetupPipeline();
+});
 
 // Event listener for the Submit button
 submitButton.addEventListener("click", handleSubmit);
@@ -85,4 +86,8 @@ const setLoading = (isLoading: boolean) => {
     loadingIndicator.hidden = !isLoading;
     submitButton.disabled = isLoading;
 };
+
 `;
+
+
+

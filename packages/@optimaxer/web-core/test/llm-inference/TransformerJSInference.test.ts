@@ -5,13 +5,13 @@
 
 import { expect, test } from 'vitest';
 
-import { TransformerJSInference } from '../../src/llm-inferences/TransformerJSInference';
+import { TransformerJSInferenceEngine } from '../../src/llm-inferences/TransformerJSInferenceEngine';
 import { ChatMessage, HumanChatMessage, SystemChatMessage } from '../../src/types/ChatMessages';
 
+import { DetectEnv } from '../../src/utils/DetectEnv';
 
-
-test('Run Inference on Test Input', async () => {
-    const llmModel: TransformerJSInference = new TransformerJSInference('tinymistral');
+test.skipIf(DetectEnv.isNode)('Run Inference on Test Input', async () => {
+    const llmModel: TransformerJSInferenceEngine = new TransformerJSInferenceEngine('tinymistral');
 
     const chat: ChatMessage[] = [
         new SystemChatMessage('Tell Me about Newton'),

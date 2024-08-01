@@ -1,0 +1,30 @@
+{
+  "name": "web-ui",
+  "version": "1.0.0",
+  "description": "Now I’m the model of a modern major general / The venerated Virginian veteran whose men are all / Lining up, to put me up on a pedestal / Writin’ letters to relatives / Embellishin’ my elegance and eloquence / But the elephant is in the room / The truth is in ya face when ya hear the British cannons go / BOOM",
+  "keywords": [],
+  "author": "samudrak99x <samudrak@99x.io>",
+  "license": "ISC",
+  "main": "lib/web-ui.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/99x/optimaxer-web.git"
+  },
+  "scripts": {
+    "test": "node ./__tests__/web-ui.test.js"
+  },
+  "bugs": {
+    "url": "https://github.com/99x/optimaxer-web/issues"
+  },
+  "homepage": "https://github.com/99x/optimaxer-web#readme",
+  "dependencies": {
+    "@optimaxer99x/web-edge-core": "^1.1.2"
+  }
+}

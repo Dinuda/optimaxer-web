@@ -87,7 +87,9 @@ export const config:string = JSON.stringify(
     ]
 );
 
-export const commands:string = JSON.stringify([
+export const commands:string = JSON.stringify({
+    "version": "0.1.3",
+    "data": [
     {
         "content": "Create a new order",
         "metadata": {
@@ -754,9 +756,11 @@ export const commands:string = JSON.stringify([
         "id": 3
         }
     }
-]);
+]});
 
-export const actions:string = JSON.stringify([
+export const actions:string = JSON.stringify({
+    "version": "0.1.3",
+    "data": [
     {
         "content": "new",
         "metadata": {
@@ -1087,4 +1091,4 @@ export const actions:string = JSON.stringify([
         "name": "filter"
         }
     }
-]);
+]});

@@ -8,7 +8,7 @@ import { CommandResponse } from '../types/CommandResponse';
 
 export abstract class Pipeline {
     // A vector store instance for managing and querying vectors
-    vectorStore: ClientVectorStoreEngine;
+    protected vectorStore: ClientVectorStoreEngine;
 
     constructor() {
         // Initialize the vector store

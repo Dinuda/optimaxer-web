@@ -5,7 +5,7 @@
     "email": "hello@99x.io",
     "url": "https://99x.io"
   },
-  "version": "1.0.3",
+  "version": "1.0.6",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",

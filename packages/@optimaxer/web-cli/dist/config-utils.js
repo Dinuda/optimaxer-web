@@ -21,3 +21,4 @@ export function transformActionConfig(inputData) {
     });
     return result;
 }
+//# sourceMappingURL=config-utils.js.map

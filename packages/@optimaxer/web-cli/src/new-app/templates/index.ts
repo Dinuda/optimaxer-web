@@ -13,8 +13,7 @@ export const indexHtml:string = `
             <h1>Sample App - Web Commands</h1>
             <div class="row justify-end">
                 <div class="col-auto">
-                    <button id="saveEmbeddingsButton" class="btn primary">Save Embeddings</button>
-                    <div id="saveMessage" class="message" hidden></div>
+                    <div id="saveMessage" class="message">Running Embeddings...</div>
                 </div>
             </div>
             <div class="row">

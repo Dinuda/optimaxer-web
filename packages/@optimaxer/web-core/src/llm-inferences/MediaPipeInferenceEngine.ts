@@ -3,7 +3,7 @@
  * Email: SrilalS@99x.io
 **/
 
-import { FilesetResolver, LlmInference } from "@mediapipe/tasks-genai";
+import { FilesetResolver, LlmInference, WebGpuOptions } from "@mediapipe/tasks-genai";
 import { AvailableModels } from "../types/AvailableModels";
 import { get, set } from 'idb-keyval';
 import { AbstractLLMInferenceEngine } from "./AbstractLLMInferenceEngine";
@@ -47,27 +47,53 @@ export class MediaPipeInferenceEngine extends AbstractLLMInferenceEngine {
         this.llmModel = model;
     }
 
-    static async init(model: MediaPipeModel, localMode: boolean = false): Promise<MediaPipeInferenceEngine> {
+    static async init(
+        model: MediaPipeModel,
+        localMode: boolean = false,
+        maxTokens: number = 512,
+        topK: number = 1,
+        temperature: number = 0.0,
+        randomSeed: number = 1
+    ): Promise<MediaPipeInferenceEngine> {
         const instance = new MediaPipeInferenceEngine(model, localMode);
-        await instance.createEngine();
+        await instance.createEngine(
+            maxTokens,
+            topK,
+            temperature,
+            randomSeed
+        );
         return instance;
     }
 
-    async createEngine() {
+    async createEngine(
+        maxTokens: number = 512,
+        topK: number = 1,
+        temperature: number = 0.0,
+        randomSeed: number = 1
+    ) {
         const genai = await FilesetResolver.forGenAiTasks(
-            "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-genai@latest/wasm"
+            "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-genai/wasm"
         );
-
+        
+        const gpu = await LlmInference.createWebGpuDevice();
+        
         this.llmInference = await LlmInference.createFromOptions(genai, {
             baseOptions: {
                 modelAssetPath: await this.restoreFileFromIDB(),
+                gpuOptions: {
+                    device: gpu
+                }
             },
-            maxTokens: 2048,
-            topK: 16,
-            temperature: 0.1,
-            randomSeed: 69,
+            maxTokens: 512,
+            topK: 1,
+            temperature: 0.0,
+            randomSeed: 1,
 
         });
+
+        
+
+        
     }
 
     async downloadModel() {
@@ -225,3 +251,56 @@ export class MediaPipeInferenceEngine extends AbstractLLMInferenceEngine {
     }
 
 }
+
+
+// async function firstFunction(callback) {
+//     console.log("function running...");
+//     setTimeout(() => {
+//         callback("test");
+//     }, 3000);
+//     const intervalId = setInterval(() => {
+//         console.log("Interval function running...");
+//     }, 500);
+//     return intervalId;
+// }
+
+// let t = (x) => {
+//     console.log("x:", x);
+// };
+
+
+// async function controlledFirstFunction(callback) {
+//     let originalSetTimeout = window.setTimeout;
+//     let originalSetInterval = window.setInterval;
+//     let timeoutId, intervalId;
+//     let shouldStop = false;
+
+//     window.setTimeout = function(fn, delay) {
+//         timeoutId = originalSetTimeout(() => {
+//             if (!shouldStop) {
+//                 fn();
+//                 shouldStop = true;
+//                 clearTimeout(timeoutId);
+//                 clearInterval(intervalId);
+//                 window.setTimeout = originalSetTimeout;
+//                 window.setInterval = originalSetInterval;
+//             }
+//         }, delay);
+//     };
+
+//     window.setInterval = function(fn, delay) {
+//         intervalId = originalSetInterval(() => {
+//             if (!shouldStop) {
+//                 fn();
+//             } else {
+//                 clearInterval(intervalId);
+//                 window.setTimeout = originalSetTimeout;
+//                 window.setInterval = originalSetInterval;
+//             }
+//         }, delay);
+//     };
+
+//     intervalId = await firstFunction(callback);
+// }
+
+// controlledFirstFunction(t);
