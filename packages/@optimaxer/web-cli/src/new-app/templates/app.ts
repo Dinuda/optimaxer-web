@@ -55,7 +55,7 @@ const loadJson = async (url: string) => {
 const setupPipeline = async () => {
     const commandJson = await loadJson('/commands.json');
     const actionsJson = await loadJson('/actions.json');
-    const cmdPipeline = new CommandPipeline();
+    const cmdPipeline = await CommandPipeline.init();
     const setup = await cmdPipeline.setup(commandJson, actionsJson);
     return setup;
 };
@@ -64,7 +64,7 @@ const setupPipeline = async () => {
 
 // Function to run the pipeline
 const runPipeline = async (userCommand: string) => {
-    const cmdPipeline = new CommandPipeline();
+    const cmdPipeline = await CommandPipeline.init();
     const config = await loadJson('/config.json');
     const response = await cmdPipeline.run(userCommand, config, 'gemma', {});
     return response;

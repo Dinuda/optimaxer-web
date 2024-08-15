@@ -3,6 +3,9 @@
  * Email: CharukaR@99x.io
  **/
 
+import { OnBrowserEmbeddingEngine } from "@optimaxer/web-core";
+import { CosineSim } from "@optimaxer/web-core";
+
 class JsonKeyMapper {
     /**
      * tokenize
@@ -62,10 +65,22 @@ class JsonKeyMapper {
      * The similarity is calculated as (maxLength - Levenshtein distance) / maxLength, where maxLength
      * is the length of the longer string.
      */
-    static computeSimilarity(stringA: string, stringB: string): number {
+    static async computeSimilarity(embeddingEngine:OnBrowserEmbeddingEngine, stringA: string, stringB: string): Promise<number> {
         const maxLength = Math.max(stringA.length, stringB.length);
+        // const cosineSimialrity = await JsonKeyMapper.computeCosineSimilarity(embeddingEngine, stringA, stringB);
+        // return cosineSimialrity
+        // console.log(`Cosine Similarity for ${stringA} and ${stringB} is: ${cosineSimialrity}`);
         if (maxLength === 0) return 1.0;
         return (maxLength - JsonKeyMapper.levenshtein(stringA, stringB)) / maxLength;
+    }
+
+    static async computeCosineSimilarity(embeddingEngine: OnBrowserEmbeddingEngine, stringA: string, stringB: string): Promise<number>{
+        if(stringA==stringB){
+            return 1.0
+        }
+        const embeddings: number[][] = await embeddingEngine.embedTexts([stringA, stringB]);
+        const cosineSimilarityScore = CosineSim.cosineSimilarity(embeddings[0], embeddings[1]);
+        return cosineSimilarityScore;
     }
 
     /**
@@ -78,38 +93,37 @@ class JsonKeyMapper {
      * based on similarity. It then extracts the values from the data object and creates a new object
      * with the schema keys and the corresponding values.
      */
-    static mapKeysAndExtractValues(schema: object, data: { [key: string]: string }): { [key: string]: string } {
+    static async mapKeysAndExtractValues(schema: object, data: { [key: string]: string }, embeddingEngine: OnBrowserEmbeddingEngine): Promise<{ [key: string]: string }> {
         // Extract keys from schema and data
         const schemaKeys = Object.keys(schema);
         const dataKeys = Object.keys(data);
-    
+
         // Create an array to store the maximum similarity scores for each schema key
         const similarityScores: { schemaKey: string, maxSimilarity: number, bestMatch: string | null }[] = [];
-    
+
         // Compute similarity scores for each schema key
-        schemaKeys.forEach((schemaKey) => {
+        await Promise.all(schemaKeys.map(async (schemaKey) => {
             let maxSimilarity: number = -1;
             let bestMatch: string | null = null;
-    
-            dataKeys.forEach((dataKey) => {
-                const similarity: number = JsonKeyMapper.computeSimilarity(schemaKey, dataKey);
-                console.log(`Similarity for ${schemaKey} and ${dataKey} is: ${similarity}`);
+
+            await Promise.all(dataKeys.map(async (dataKey) => {
+                const similarity: number = await JsonKeyMapper.computeSimilarity(embeddingEngine, schemaKey, dataKey);
                 if (similarity > maxSimilarity) {
                     maxSimilarity = similarity;
                     bestMatch = dataKey;
                 }
-            });
-    
+            }));
+
             similarityScores.push({ schemaKey, maxSimilarity, bestMatch });
-        });
-    
+        }));
+
         // Sort the similarity scores in descending order based on the maxSimilarity
         similarityScores.sort((a, b) => b.maxSimilarity - a.maxSimilarity);
-    
+
         // Create a mapping object and track used data keys
         let mapping: { [key: string]: any } = {};
         let usedDataKeys = new Set();
-    
+
         // Perform the mapping based on sorted similarity scores
         similarityScores.forEach(({ schemaKey, bestMatch }) => {
             if (bestMatch !== null && !usedDataKeys.has(bestMatch)) {
@@ -117,7 +131,7 @@ class JsonKeyMapper {
                 usedDataKeys.add(bestMatch);
             }
         });
-    
+
         // Create the result object based on the mapping
         let result: { [key: string]: string } = {};
         Object.keys(schema).forEach((key: string) => {
@@ -127,10 +141,9 @@ class JsonKeyMapper {
                 result[key] = "";
             }
         });
-    
+
         return result;
     }
-    
 }
 
 export { JsonKeyMapper };

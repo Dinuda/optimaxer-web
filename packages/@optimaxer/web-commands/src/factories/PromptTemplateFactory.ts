@@ -5,6 +5,7 @@
 
 import { GemmaModelPromptTemplate } from "../promptTemplates/GemmaModelPromptTemplate";
 import { PhiModelPromptTemplate } from "../promptTemplates/PhiModelPromptTemplate";
+import { Example } from "../types/JsonDocument";
 import { PromptTemplate } from "../types/PromptTemplate";
 
 export class PromptTemplateFactory {
@@ -19,7 +20,7 @@ export class PromptTemplateFactory {
      * 
      * @throws Error if no prompt template is found for the given model name.
      */
-    static getFormattedPrompt(modelName: string, params: Record<string, string>): string {
+    static getFormattedPrompt(modelName: string, params: Record<string, string>, examples: Example[]): string {
         let promptTemplate: PromptTemplate;
 
         // Select the appropriate prompt template based on the model name
@@ -42,6 +43,9 @@ export class PromptTemplateFactory {
         }
 
         // Format and return the prompt using the selected template
-        return promptTemplate.format(params);
+        if(examples.length >=2){
+            return promptTemplate.formatPromptWithExamples(params, examples);
+        }
+        return promptTemplate.formatPromptWithoutExamples(params);
     }
 }

@@ -15,7 +15,7 @@ export class VecDoc {
 export async function Embedder(content:string[]):Promise<VecDoc[]> {
 
     const model = new HuggingFaceTransformersEmbeddings({
-        model: "Xenova/all-MiniLM-L6-v2",
+        model: "Xenova/gte-small",
     });
     
     const documentRes = await model.embedDocuments(content);

@@ -11,6 +11,11 @@
  */
 export interface Action {
     /**
+     * The name of the action.
+     */
+    name: string;
+
+    /**
      * The endpoint to which the action should be directed.
      */
     endpoint?: string;

@@ -1,5 +1,4 @@
 {
-  "extends": "../../../tsconfig.json",
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": "src",
@@ -8,10 +7,11 @@
     "target": "ESNext",
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "declaration": true, // set to true on prod
-    "sourceMap": true, // set to true on dev
+    "declaration": true,
+    "sourceMap": true,
     "strict": true,
-    "types": ["node"],
+    "types": ["node","@mediapipe/tasks-genai"],
+    "skipLibCheck": true,
   },
   "include": ["src/**/*"]
 }

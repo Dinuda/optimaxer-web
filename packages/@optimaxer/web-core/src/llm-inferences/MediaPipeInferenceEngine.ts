@@ -84,16 +84,12 @@ export class MediaPipeInferenceEngine extends AbstractLLMInferenceEngine {
                     device: gpu
                 }
             },
-            maxTokens: 512,
-            topK: 1,
-            temperature: 0.0,
-            randomSeed: 1,
+            maxTokens: maxTokens,
+            topK: topK,
+            temperature: temperature,
+            randomSeed: randomSeed,
 
         });
-
-        
-
-        
     }
 
     async downloadModel() {
@@ -251,56 +247,3 @@ export class MediaPipeInferenceEngine extends AbstractLLMInferenceEngine {
     }
 
 }
-
-
-// async function firstFunction(callback) {
-//     console.log("function running...");
-//     setTimeout(() => {
-//         callback("test");
-//     }, 3000);
-//     const intervalId = setInterval(() => {
-//         console.log("Interval function running...");
-//     }, 500);
-//     return intervalId;
-// }
-
-// let t = (x) => {
-//     console.log("x:", x);
-// };
-
-
-// async function controlledFirstFunction(callback) {
-//     let originalSetTimeout = window.setTimeout;
-//     let originalSetInterval = window.setInterval;
-//     let timeoutId, intervalId;
-//     let shouldStop = false;
-
-//     window.setTimeout = function(fn, delay) {
-//         timeoutId = originalSetTimeout(() => {
-//             if (!shouldStop) {
-//                 fn();
-//                 shouldStop = true;
-//                 clearTimeout(timeoutId);
-//                 clearInterval(intervalId);
-//                 window.setTimeout = originalSetTimeout;
-//                 window.setInterval = originalSetInterval;
-//             }
-//         }, delay);
-//     };
-
-//     window.setInterval = function(fn, delay) {
-//         intervalId = originalSetInterval(() => {
-//             if (!shouldStop) {
-//                 fn();
-//             } else {
-//                 clearInterval(intervalId);
-//                 window.setTimeout = originalSetTimeout;
-//                 window.setInterval = originalSetInterval;
-//             }
-//         }, delay);
-//     };
-
-//     intervalId = await firstFunction(callback);
-// }
-
-// controlledFirstFunction(t);

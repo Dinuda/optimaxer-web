@@ -4,6 +4,7 @@ import { WebLLMModel, MediaPipeModel } from "../types/LLMModel";
 import { LLMEngine, availableLLMEngines } from "../types/InferenceEngines";
 import { PromptTemplateFactory } from "./PromptTemplateFactory";
 import { Action } from "../types/Action";
+import { Example } from "../types/JsonDocument";
 
 // The InferenceFactory class handles the creation and usage of LLM inference engines.
 export class InferenceFactory {
@@ -19,10 +20,11 @@ export class InferenceFactory {
      * @param llmInferenceEngine - The type of inference engine to be used (LLMEngine).
      * @returns A promise that resolves to the inference result as a string.
      */
-    static async generateInference(userCommand: string, action: Action, modelName: WebLLMModel | MediaPipeModel, llmInferenceEngine: LLMEngine): Promise<string> {
+    static async generateInference(userCommand: string, action: Action, modelName: WebLLMModel | MediaPipeModel, llmInferenceEngine: LLMEngine, examples: Example[]): Promise<string> {
         // Preparing parameters for the prompt template.
         const params: Record<string, any> = { "outputFormat": action.params, "userCommand": userCommand };
-        const formattedPrompt: string = PromptTemplateFactory.getFormattedPrompt(modelName, params);
+        const formattedPrompt: string = PromptTemplateFactory.getFormattedPrompt(modelName, params, examples);
+        console.log("Formatted Prompt: ", formattedPrompt);
 
         // Initializing the LLMInferenceEngine if it hasn't been created yet.
         if (!InferenceFactory.llmInstance) {

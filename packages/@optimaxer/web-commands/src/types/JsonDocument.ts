@@ -46,3 +46,9 @@ export interface ExampleConfig {
     version: string;
     data: any[];
 }
+
+export interface Example{
+    command: string;
+    output: any;
+    metadata: Metadata;
+}

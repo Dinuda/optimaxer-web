@@ -54,47 +54,54 @@ export class Utility {
 
     /**
      * extractJsonFromLlmResponse
-     * @param response - The response string from which to extract the JSON object.
+     * @param input - The response string from which to extract the JSON object.
      * @returns object
      * 
      * This function extracts a JSON object from a response string. It handles cases 
      * where the response might have incorrect formatting, replacing square brackets 
      * with curly braces if necessary, and parses the JSON.
      */
-    static extractJsonFromLlmResponse(response: string): { [key: string]: string } {
-        console.log("raw response of LLM ", response);
-
-        // Check and replace first [ with { if no { is found
-        if (response.indexOf('{') === -1) {
-            response = response.replace('[', '{');
-        }
-
-        // Check and replace last ] with } if no } is found
-        if (response.lastIndexOf('}') === -1) {
-            response = response.replace(/](?=[^\]]*$)/, '}');
-        }
-
-        let startIndex: number = response.indexOf('{');
-        let endIndex: number = response.lastIndexOf('}');
-        let jsonString: string = response.substring(startIndex, endIndex + 1);
-        console.log("replaced json ", jsonString);
-        let parsedData = JSON.parse(jsonString);
-
-        if (Array.isArray(parsedData)) {
-            for (let item of parsedData) {
-                if (typeof item === 'object' && !Array.isArray(item) && item !== null) {
-                    return item;
+    static extractJsonFromLlmResponse(input: string): any {
+        try {
+            // Check if the string contains '{' and '}'
+            const hasCurlyBraces = input.includes('{') && input.includes('}');
+            // Check if the string contains '[' and ']'
+            const hasSquareBraces = input.includes('[') && input.includes(']');
+        
+            // If no curly braces but has square braces, replace the first '[' with '{' and last ']' with '}'
+            if (!hasCurlyBraces && hasSquareBraces) {
+                const firstSquareIndex = input.indexOf('[');
+                const lastSquareIndex = input.lastIndexOf(']');
+                if (firstSquareIndex !== -1 && lastSquareIndex !== -1) {
+                    input = input.substring(0, firstSquareIndex) + '{' + input.substring(firstSquareIndex + 1, lastSquareIndex) + '}' + input.substring(lastSquareIndex + 1);
                 }
             }
+        
+            const regex = /({[^{}]*}|[[^[]*\])/g;
+            const matches = input.match(regex);
+            let lastParsedObject = {};
+            
+            if (matches) {
+                for (let match of matches) {
+                    try {
+                        const parsed = JSON.parse(match);
+                        if (Array.isArray(parsed) && parsed.length > 0) {
+                            lastParsedObject = parsed[parsed.length - 1]; // Get the last element of the array
+                        } else if (typeof parsed === 'object') {
+                            lastParsedObject = parsed;
+                        }
+                    } catch (e) {
+                        // Continue to next match if JSON parsing fails
+                    }
+                }
+            }
+            return lastParsedObject;
+        } catch (error) {
+            console.log("Error: Incorrect JSON Format;", error);
             return {};
         }
-
-        if (typeof parsedData === 'object' && !Array.isArray(parsedData) && parsedData !== null) {
-            return parsedData;
-        }
-
-        return {};
     }
+    
 
     /**
      * createUrl
@@ -129,7 +136,7 @@ export class Utility {
      * If a validation function exists, it dynamically creates and executes it to validate the parameter value.
      * If the parameter value does not pass the validation, the parameter name is added to the missingParams array.
      */
-    static validateActionParams(entity: Entity, action: Action, params: { [key: string]: string }): string[] { 
+    static validateActionParams(entity: Entity, action: Action, params: { [key: string]: string }): string[] {
         const missingParams: string[] = [];
         for (const [param, extractionDesc] of Object.entries(action.params)) {
             if (entity.validations && entity.validations[param]) {
@@ -150,9 +157,9 @@ export class Utility {
      * 
      * This function filters the entities and return the similar entity having the metadata.
      **/
-    static filterEntity(similarEntities: Document[]): number{
+    static filterEntity(similarEntities: Document[]): number {
         for (let index = 0; index < similarEntities.length; index++) {
-            if(similarEntities[index].metadata["id"]){
+            if (similarEntities[index].metadata["id"]) {
                 return similarEntities[index].metadata["id"] as number
             }
         }

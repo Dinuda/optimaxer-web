@@ -30,7 +30,7 @@ export class VectorDatabaseManager {
      */
     static async getLatestVersionedDBName(baseName: string): Promise<string> {
         const versionedDBNames = await this.getAllVersionedDBNames(baseName);
-        if (versionedDBNames.length === 0) return `${baseName}_1.0.0`;
+        if (versionedDBNames.length === 0) return `${baseName}_0.0.0`;
     
         const latestVersion = versionedDBNames
             .map(name => name.replace(`${baseName}_`, ''))

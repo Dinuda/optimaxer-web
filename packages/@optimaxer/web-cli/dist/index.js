@@ -4,7 +4,7 @@ import { GenCMD } from './gen-cmd/GenCMD.js';
 import { NewApp } from './new-app/NewApp.js';
 import { GenCon } from './gen-con/GenCon.js';
 const program = new Command();
-const version = '1.0.7';
+const version = '1.1.1';
 program
     .name('Optimaxer CLI')
     .version(version)

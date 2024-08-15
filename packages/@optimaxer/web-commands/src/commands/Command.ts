@@ -3,7 +3,7 @@
  * Email: CharukaR@99x.io
 **/
 
-import { Document } from "@optimaxer/web-core";
+import { Document, OnBrowserEmbeddingEngine } from "@optimaxer/web-core";
 import { Entity } from "../types/Entity";
 import { ClientVectorStoreEngine } from "@optimaxer/web-core";
 import { Action } from "../types/Action";
@@ -13,6 +13,7 @@ import { JsonKeyMapper } from "../utils/JsonKeyMapper";
 import { CommandResponse } from "../types/CommandResponse";
 import { InferenceFactory } from "../factories/InferenceFactory";
 import { LLMEngine } from "../types/InferenceEngines";
+import { ExampleConfig } from "../types/JsonDocument";
 
 
 export class Command {
@@ -54,7 +55,7 @@ export class Command {
         const availableActions: string[] = Object.keys(entity.actions);
         const mostSimilarActions: Document[] = await vecStore.searchVectorStore(this.command, vecStoreName, 1000);
         const mostSimilarActionName: string = Utility.filterAction(availableActions, mostSimilarActions);
-        return entity.actions[mostSimilarActionName];
+        return {...entity.actions[mostSimilarActionName], name: mostSimilarActionName};
     }
 
     /**
@@ -66,13 +67,15 @@ export class Command {
      * This function performs data extraction using the language model based on the action parameters.
      * It returns a promise of the extracted data as an object.
      **/
-    async getExtraction(action: Action, modelName: WebLLMModel, llmInferenceEngine: LLMEngine): Promise<{ [key: string]: string }> {
+    async getExtraction(entity: Entity, action: Action, modelName: WebLLMModel, llmInferenceEngine: LLMEngine, examples: ExampleConfig, embeddingEngine: OnBrowserEmbeddingEngine): Promise<{ [key: string]: string }> {
         if(Object.keys(action.params).length===0){
             return {}
         }
-        const llmOutput: string = await InferenceFactory.generateInference(this.command, action, modelName, llmInferenceEngine)
+        const filteredExamples = examples.data.filter(item => item.metadata.id === entity.id && item.metadata.name === action.name);
+        const llmOutput: string = await InferenceFactory.generateInference(this.command, action, modelName, llmInferenceEngine, filteredExamples);
+        console.log("raw llm output: ", llmOutput);
         const parsedLlmOutput: { [key: string]: string } = Utility.extractJsonFromLlmResponse(llmOutput);
-        const mappedLlmOutput: { [key: string]: string } = JsonKeyMapper.mapKeysAndExtractValues(action.params, parsedLlmOutput);
+        const mappedLlmOutput: { [key: string]: string } = await JsonKeyMapper.mapKeysAndExtractValues(action.params, parsedLlmOutput, embeddingEngine);
         return mappedLlmOutput;
     }
 

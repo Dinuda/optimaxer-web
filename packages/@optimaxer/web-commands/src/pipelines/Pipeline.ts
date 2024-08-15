@@ -3,16 +3,18 @@
  * Email: CharukaR@99x.io
  **/
 
-import { ClientVectorStoreEngine, Response } from '@optimaxer/web-core';
+import { ClientVectorStoreEngine, Response, OnBrowserEmbeddingEngine } from '@optimaxer/web-core';
 import { CommandResponse } from '../types/CommandResponse';
 
 export abstract class Pipeline {
     // A vector store instance for managing and querying vectors
     protected vectorStore: ClientVectorStoreEngine;
+    protected embeddingEngine: OnBrowserEmbeddingEngine;
 
-    constructor() {
+    constructor(vectorStore:ClientVectorStoreEngine, embeddingEngine:OnBrowserEmbeddingEngine) {
         // Initialize the vector store
-        this.vectorStore = new ClientVectorStoreEngine();
+        this.vectorStore = vectorStore;
+        this.embeddingEngine = embeddingEngine;
     }
 
     /**

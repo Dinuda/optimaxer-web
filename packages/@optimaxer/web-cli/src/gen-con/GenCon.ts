@@ -9,6 +9,7 @@ import axios from "axios";
 import { encodingForModel } from "js-tiktoken";
 
 import { Embedder, VecDoc } from './embedder.js';
+import { getProgressBar } from "../utils/ConsoleUtils.js";
 
 export class GenCon extends AbstractAction {
     nhm:NodeHtmlMarkdown = new NodeHtmlMarkdown();
@@ -144,8 +145,12 @@ export class GenCon extends AbstractAction {
 
         const contents:string[] = [];
 
+        const commandSpinner = ora(`Extracting Content ${sites.length} Pages...`).start();
         for (let i = 0; i < sites.length; i++) {
-            const commandSpinner = ora(`Extracting Content ${index} of ${sites.length}`).start();
+            
+            const progress = getProgressBar(index, sites.length);
+            commandSpinner.text = `${progress}`;
+            
 
             const html = await this.fetchHTML(sites[i]);
             const $ = cheerio.load(html);
@@ -161,8 +166,6 @@ export class GenCon extends AbstractAction {
             
             const mdContent:string = this.nhm.translate($.html());
 
-            console.log(mdContent.length);
-
             if (!fs.existsSync('./content')) {
                 fs.mkdirSync('./content');
             }
@@ -175,21 +178,26 @@ export class GenCon extends AbstractAction {
                     contents.push(section);
                 });
 
-                
-                commandSpinner.succeed(`Content #${index} of ${sites.length} extracted.`);
                 index++;
-            } else {
-                commandSpinner.info(`Content #${index} of ${sites.length} is empty.`);
-                commandSpinner.clear();
             }
 
         }
 
+        commandSpinner.text = `Extraction Complete!`;
+        commandSpinner.succeed();
+
+        const commandSpinner2 = ora(`Embedding Content...`).start();
+
         const vecDocs:VecDoc[] = await Embedder(contents);
 
+        commandSpinner2.succeed();
         // write to json file
+
+        const commandSpinner3 = ora(`Writing to JSON...`).start();
         const jsonContent = JSON.stringify(vecDocs);
         fs.writeFileSync('./content/content.json', jsonContent);
         
+        commandSpinner3.text = `Content written to JSON file "./content/content.json."`;
+        commandSpinner3.succeed();
     }
 }

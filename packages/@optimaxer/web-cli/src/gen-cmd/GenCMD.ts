@@ -46,8 +46,18 @@ export class GenCMD extends AbstractAction {
         const saveSpinner = ora('Writing to files...').start();
         const currentDirectory = process.cwd();
 
-        fs.writeFileSync(`${currentDirectory}/commands.json`, JSON.stringify(jsonCommandResult, null, 2));
-        fs.writeFileSync(`${currentDirectory}/actions.json`, JSON.stringify(jsonActionResult, null, 2));    
+        const commandOutputObject = {
+            "version": "0.0.0",
+            "data": jsonCommandResult
+        }
+
+        const actionOutputObject = {
+            "version": "0.0.0",
+            "data": jsonActionResult
+        }
+
+        fs.writeFileSync(`${currentDirectory}/commands.json`, JSON.stringify(commandOutputObject, null, 2));
+        fs.writeFileSync(`${currentDirectory}/actions.json`, JSON.stringify(actionOutputObject, null, 2));    
         saveSpinner.succeed('Files written successfully.');
     }
 

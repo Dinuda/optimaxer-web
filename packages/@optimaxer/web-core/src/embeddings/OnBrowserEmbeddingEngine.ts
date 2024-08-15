@@ -3,7 +3,7 @@
  * Email: SrilalS@99x.io
 **/
 
-import { pipeline, Tensor, env } from '@xenova/transformers';
+import { pipeline, Tensor, env, FeatureExtractionPipeline } from '@xenova/transformers';
 import { AbstractEmbedderEngine } from './AbstractEmbedderEngine';
 import { Document } from '../types/Document';
 import { VectorDocument } from '../types/VectorDocument';
@@ -27,6 +27,7 @@ export class OnBrowserEmbeddingEngine extends AbstractEmbedderEngine{
     availableModels: AvailableModels = {
         'gte-small': new ModelInfo('Xenova/gte-small'),
     };
+    embedder!: FeatureExtractionPipeline;
 
     /**
      * Constructor
@@ -39,8 +40,17 @@ export class OnBrowserEmbeddingEngine extends AbstractEmbedderEngine{
         this.embedderModel = model;
     }
 
+    static async init(model:EmbedderModel):Promise<OnBrowserEmbeddingEngine>{
+        const instance = new OnBrowserEmbeddingEngine(model);
+        await instance.createEmbedder(instance);
+        return instance;
+    };
+
+    async createEmbedder(instance:OnBrowserEmbeddingEngine): Promise<void> {
+        this.embedder = await pipeline('feature-extraction', instance.getModel());
+    }
+
     async embedTexts(texts: string[]): Promise<number[][]> {
-        const extractor = await pipeline('feature-extraction', this.getModel());
 
         const batchSize = 50;
         const vectorizedTexts: number[][] = [];
@@ -49,7 +59,7 @@ export class OnBrowserEmbeddingEngine extends AbstractEmbedderEngine{
             console.log(`Vectorizing batch ${i} to ${i + batchSize}...`);
 
             const batch = texts.slice(i, i + batchSize);
-            const output: Tensor = await extractor(batch, { pooling: 'mean', normalize: true });
+            const output: Tensor = await this.embedder(batch, { pooling: 'mean', normalize: true });
 
             output.tolist().forEach((vector: number[]) => {
             vectorizedTexts.push(vector);
@@ -60,7 +70,6 @@ export class OnBrowserEmbeddingEngine extends AbstractEmbedderEngine{
     }
 
     async embedDocuments(documents: Document[]): Promise<VectorDocument[]> {
-        const extractor = await pipeline('feature-extraction', this.getModel());
 
         const processedDocuments:string[] = documents.map(doc => {
             if (typeof(doc.content) === 'object') {
@@ -77,7 +86,7 @@ export class OnBrowserEmbeddingEngine extends AbstractEmbedderEngine{
             console.log(`Vectorizing batch ${i} to ${i + batchSize}...`);
 
             const batch = processedDocuments.slice(i, i + batchSize);
-            const output: Tensor = await extractor(batch, { pooling: 'mean', normalize: true });
+            const output: Tensor = await this.embedder(batch, { pooling: 'mean', normalize: true });
 
             batch.forEach((doc: string, index: number) => {
             vectorDocuments.push(new VectorDocument(

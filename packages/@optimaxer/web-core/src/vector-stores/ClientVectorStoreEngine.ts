@@ -23,17 +23,24 @@ export class ClientVectorStoreEngine extends AbstractVectorStoreEngine {
      * This can be changed to any other model supported by the TransformersJS library.
      * The gte-small model is small and fast, as well as efficient for the client side.
      */ 
-    embedder:OnBrowserEmbeddingEngine = new OnBrowserEmbeddingEngine('gte-small');
+    embedder:OnBrowserEmbeddingEngine;
 
     /**
      * constructor
      * This constructor sets the allowRemoteModels to true and allowLocalModels to false.
      * to prevent the usage of local models thus interfering with the client side operations.
      */
-    constructor() {
+    constructor(embedder:OnBrowserEmbeddingEngine) {
         super();
         env.allowRemoteModels = true;
         env.allowLocalModels = false;
+        this.embedder = embedder;
+    }
+
+    static async init(): Promise<ClientVectorStoreEngine> {
+        const embedder = await OnBrowserEmbeddingEngine.init('gte-small');
+        const instance = new ClientVectorStoreEngine(embedder);
+        return instance;
     }
     
     

@@ -29,3 +29,4 @@ export { HumanChatMessage, SystemChatMessage, AIChatMessage, ChatMessage } from 
 
 // Utilities
 export { DetectEnv } from './utils/DetectEnv';
+export { CosineSim } from './utils/CosineSim';

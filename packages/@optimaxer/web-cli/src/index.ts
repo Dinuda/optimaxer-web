@@ -6,7 +6,7 @@ import { NewApp } from './new-app/NewApp.js';
 import { GenCon } from './gen-con/GenCon.js';
 
 const program = new Command();
-const version:string = '1.0.7';
+const version:string = '1.1.1';
 
 
 

@@ -3,6 +3,5 @@
  * Email: CharukaR@99x.io
 **/
 
-
 // Command Pipline for command execution
-export {CommandPipeline} from './pipelines/CommandPipeline';
+export {Classifier} from './pipelines/Classifier';

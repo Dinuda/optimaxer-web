@@ -4,7 +4,7 @@
  **/
 
 import { CommandFactory } from "../factories/CommandFactory";
-import { Document, Response } from '@optimaxer/web-core';
+import { ClientVectorStoreEngine, Document, OnBrowserEmbeddingEngine, Response } from '@optimaxer/web-core';
 import { Entity } from "../types/Entity";
 import { Action } from "../types/Action";
 import { WebLLMModel } from "../types/LLMModel";
@@ -18,9 +18,21 @@ import { ExampleConfig } from "../types/JsonDocument";
 export class CommandPipeline extends Pipeline {
     commandVecStoreName: string = 'commandDB';
     actionVecStoreName: string = 'actionDB';
+    
+    private constructor(vectorStore:ClientVectorStoreEngine, embeddingEngine:OnBrowserEmbeddingEngine) {
+        super(vectorStore, embeddingEngine);    
+    }
 
-    constructor() {
-        super();
+    /**
+     * init
+     * This function initializes the pipeline by creating a new instance of the CommandPipeline class.
+     * @returns Promise<Pipeline>
+     */
+    static async init(): Promise<Pipeline> {
+        const vectorStore = await ClientVectorStoreEngine.init();
+        const embeddingEngine = await OnBrowserEmbeddingEngine.init('gte-small');
+        const instance = new CommandPipeline(vectorStore, embeddingEngine);
+        return instance;
     }
 
     /**
@@ -75,7 +87,7 @@ export class CommandPipeline extends Pipeline {
      * the command. It returns a CommandResponse indicating the result of the execution.
      * 
     **/
-    protected async runPipeline(userCommand: string, entityConfig: any[], modelName: WebLLMModel = "gemma", functionRegistry: { [key: string]: (...args: any[]) => any }, llmInferenceEngine: LLMEngine = "media-pipe"): Promise<CommandResponse> {
+    protected async runPipeline(userCommand: string, entityConfig: any[], modelName: WebLLMModel = "gemma", functionRegistry: { [key: string]: (...args: any[]) => any }, llmInferenceEngine: LLMEngine = "media-pipe", examples: ExampleConfig = {"version":"", "data":[]}): Promise<CommandResponse> {
         console.time("pipeline");
 
         // Get the latest versioned database names
@@ -89,7 +101,7 @@ export class CommandPipeline extends Pipeline {
         console.log("Relevant Entity: ", entity);
         const action: Action = await command.getAction(entity, this.vectorStore, actionDBName);
         console.log("Action: ", action);
-        const extraction: { [key: string]: string } = await command.getExtraction(action, modelName, llmInferenceEngine);
+        const extraction: { [key: string]: string } = await command.getExtraction(entity, action, modelName, llmInferenceEngine, examples, this.embeddingEngine);
         console.log("Extraction: ", extraction);
         const execution: CommandResponse = await command.execute(entity, action, extraction, functionRegistry);
         console.timeEnd("pipeline");

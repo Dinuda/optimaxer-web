@@ -3,6 +3,8 @@
  * Email: CharukaR@99x.io
  **/
 
+import { Example } from "./JsonDocument";
+
 /**
  * PromptTemplate Interface
  * 
@@ -20,5 +22,17 @@ export interface PromptTemplate {
      * The implementation specify how the parameters are incorporated into the 
      * resulting string.
      */
-    format(params: Record<string, any>): string;
+    formatPromptWithoutExamples(params: Record<string, any>): string;
+
+    /**
+     * formatPromptWithExamples
+     * @param params - An object containing parameters used to format the prompt.
+     * @param examples - An array of example objects to be included in the prompt.
+     * @returns string
+     * 
+     * This method takes a record of parameters and an array of example objects, and 
+     * returns a formatted prompt string. The implementation specify how the parameters 
+     * and examples are incorporated into the resulting string.
+     */
+    formatPromptWithExamples(params: Record<string, any>, examples: Example[]): string;
 }
