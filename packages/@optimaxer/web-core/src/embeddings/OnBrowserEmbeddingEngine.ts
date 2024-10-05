@@ -3,6 +3,7 @@
  * Email: SrilalS@99x.io
 **/
 
+// @ts-ignore
 import { pipeline, Tensor, env, FeatureExtractionPipeline } from '@xenova/transformers';
 import { AbstractEmbedderEngine } from './AbstractEmbedderEngine';
 import { Document } from '../types/Document';

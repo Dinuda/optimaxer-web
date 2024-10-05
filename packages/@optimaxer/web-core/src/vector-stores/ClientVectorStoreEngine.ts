@@ -8,6 +8,7 @@ import { getEmbedding, EmbeddingIndex, SearchResult } from 'client-vector-search
 import { AbstractVectorStoreEngine } from './AbstractVectorStoreEngine';
 import { VectorDocument } from '../types/VectorDocument';
 import { Response } from '../types/Response';
+// @ts-ignore
 import { env } from '@xenova/transformers';
 import { Document } from '../types/Document';
 import { OnBrowserEmbeddingEngine } from '../embeddings/OnBrowserEmbeddingEngine';

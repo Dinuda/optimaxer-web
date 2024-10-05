@@ -6,6 +6,7 @@
 import { AbstractLLMInferenceEngine } from "./AbstractLLMInferenceEngine";
 import { AvailableModels } from "../types/AvailableModels";
 import { AIChatMessage, ChatMessage, HumanChatMessage, SystemChatMessage } from "../types/ChatMessages";
+// @ts-ignore
 import { env, pipeline, Message, TextGenerationOutput, TextGenerationPipeline } from '@xenova/transformers';
 import { Model, ModelInfo } from "../types/Model";
 import { EventEmitter } from 'eventemitter3';

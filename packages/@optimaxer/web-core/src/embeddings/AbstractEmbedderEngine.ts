@@ -33,4 +33,5 @@ export abstract class AbstractEmbedderEngine {
      * @returns Promise<VectorDocument[]>
      */
     abstract embedDocuments(documents: Document[]): Promise<VectorDocument[]>;
+
 }

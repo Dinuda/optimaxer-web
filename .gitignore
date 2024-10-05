@@ -26,8 +26,6 @@ node_modules
 packages/@optimaxer/web-core/dist
 
 package-lock.json
-
-
 packages/@optimaxer/web-classify/package-lock.json
 packages/@optimaxer/web-cli/package-lock.json
 packages/@optimaxer/web-commands/package-lock.json

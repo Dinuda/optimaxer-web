@@ -1,8 +1,3 @@
-/**
- * Author: Srilal S. Siriwardhane
- * Email: SrilalS@99x.io
-**/
-
 import { Document } from '../../src/types/Document';
 import { VectorDocument } from '../../src/types/VectorDocument';
 import { OnBrowserEmbeddingEngine } from '../../src/embeddings/OnBrowserEmbeddingEngine';
@@ -17,8 +12,17 @@ const documents: Document[] = [
     new Document({content: 'This is a test document 4', metadata: {id: '4'}})
 ];
 
-test("[ Browser/Node ] Run OnBrowserEmbedding", async ()=>{
-    const onBrowserEmbeddingEngine: OnBrowserEmbeddingEngine = new OnBrowserEmbeddingEngine('gte-small');
-    const vectorDocuments:VectorDocument[] = await onBrowserEmbeddingEngine.embedDocuments(documents);
+test("[ Browser/Node ] Run OnBrowserEmbedding", async () => {
+    // Initialize the embedding engine asynchronously
+    const onBrowserEmbedding: OnBrowserEmbeddingEngine = await OnBrowserEmbeddingEngine.init('gte-small');
+
+    // Embed the documents
+    const vectorDocuments: VectorDocument[] = await onBrowserEmbedding.embedDocuments(documents);
+
+    // Check that we got the correct number of embedded documents
     expect(vectorDocuments.length).toBe(5);
+
+    // Optionally, check the contents of the first vectorDocument
+    expect(vectorDocuments[0].content).toBe('This is a test document 0');
+    expect(vectorDocuments[0].metadata.id).toBe('0');
 });
