@@ -18,3 +18,25 @@ npm-debug.log
 # Ignore macOS specific files
 .DS_Store
 node_modules
+
+# build
+**/package-lock.json
+
+/packages/dist
+packages/@optimaxer/web-core/dist
+
+package-lock.json
+
+
+packages/@optimaxer/web-classify/package-lock.json
+packages/@optimaxer/web-cli/package-lock.json
+packages/@optimaxer/web-commands/package-lock.json
+packages/@optimaxer/web-core/package-lock.json
+packages/@optimaxer/web-edge-core/package-lock.json
+packages/@optimaxer/web-english/package-lock.json
+packages/@optimaxer/web-forms/package-lock.json
+packages/@optimaxer/web-help/package-lock.json
+packages/@optimaxer/web-rag/package-lock.json
+packages/@optimaxer/web-search/package-lock.json
+packages/@optimaxer/web-text/package-lock.json
+packages/@optimaxer/web-translate/package-lock.json
